@@ -1,0 +1,122 @@
+.sidebar {
+  width: 260px;
+  background-color: #1a1e2d;
+  color: #a0a5b1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  padding: 24px;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.logoIcon {
+  width: 36px;
+  height: 36px;
+  background-color: #3b82f6;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.brandName {
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+.brandSub {
+  font-size: 11px;
+  margin-top: 4px;
+  color: #7c8397;
+}
+
+.navGroup {
+  padding: 24px 16px 0;
+}
+
+.navTitle {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  padding-left: 12px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  color: #a0a5b1;
+  text-decoration: none;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  margin-bottom: 4px;
+}
+
+.navItem:hover {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.navItem.active {
+  background-color: rgba(37, 99, 235, 0.1);
+  color: #3b82f6;
+  font-weight: 500;
+}
+
+.navIcon {
+  font-size: 16px;
+  opacity: 0.8;
+}
+
+.userProfile {
+  margin-top: auto;
+  padding: 20px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #3b82f6;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.userName {
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.userRole {
+  font-size: 12px;
+  color: #7c8397;
+  margin-top: 4px;
+}

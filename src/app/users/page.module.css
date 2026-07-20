@@ -1,0 +1,362 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.header {
+  margin-bottom: 8px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.card {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.02);
+  padding: 24px;
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.filterInputs {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.input {
+  height: 38px;
+  padding: 0 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  min-width: 200px;
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.btnPrimary {
+  height: 38px;
+  padding: 0 20px;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btnPrimary:hover {
+  background-color: #2563eb;
+}
+
+.btnSuccess {
+  height: 38px;
+  padding: 0 20px;
+  background-color: #10b981;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+}
+
+.btnSuccess:hover {
+  background-color: #059669;
+}
+
+.tableContainer {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #f3f4f6;
+  margin-bottom: 24px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+
+.table th {
+  background-color: #f9fafb;
+  color: #4b5563;
+  font-weight: 600;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.table td {
+  padding: 16px;
+  border-bottom: 1px solid #f3f4f6;
+  color: #374151;
+  vertical-align: middle;
+}
+
+.table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.loadingCell {
+  text-align: center;
+  color: #6b7280;
+  padding: 40px !important;
+}
+
+.usernameText {
+  color: #3b82f6;
+  font-weight: 500;
+}
+
+.roleBadge {
+  background-color: #eff6ff;
+  color: #2563eb;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.statusActive {
+  background-color: #ecfdf5;
+  color: #10b981;
+}
+
+.statusInactive {
+  background-color: #fef2f2;
+  color: #ef4444;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.actionEdit {
+  color: #eab308;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 0;
+}
+
+.actionEdit:hover {
+  color: #ca8a04;
+  text-decoration: underline;
+}
+
+.actionDelete {
+  color: #ef4444;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 0;
+}
+
+.actionDelete:hover {
+  color: #dc2828;
+  text-decoration: underline;
+}
+
+.actionSuspend {
+  color: #6b7280;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 0;
+}
+
+.actionSuspend:hover {
+  color: #4b5563;
+  text-decoration: underline;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 8px;
+}
+
+.pageInfo {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.pageControls {
+  display: flex;
+  gap: 8px;
+}
+
+.pageBtn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e5e7eb;
+  background-color: white;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pageBtn:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.pageBtnActive {
+  background-color: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.pageBtnActive:hover {
+  color: white;
+}
+
+/* Modal specific styles for Users Page */
+.suspendIconWrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: #fef3c7; /* yellow-100 */
+  color: #f59e0b; /* yellow-500 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+.suspendIconWrapper svg {
+  width: 32px;
+  height: 32px;
+}
+
+.deleteIconWrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: #fee2e2; /* red-100 */
+  color: #ef4444; /* red-500 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+.deleteIconWrapper svg {
+  width: 32px;
+  height: 32px;
+}
+
+.modalUsername {
+  font-weight: 600;
+  color: #111827;
+  margin-top: 4px;
+  margin-bottom: 24px;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.btnCancel {
+  padding: 10px 24px;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btnCancel:hover {
+  background-color: #f9fafb;
+}
+
+.btnConfirmSuspend {
+  padding: 10px 24px;
+  background-color: #f59e0b;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.btnConfirmSuspend:hover {
+  background-color: #d97706;
+}
+
+.btnConfirmDelete {
+  padding: 10px 24px;
+  background-color: #ef4444;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.btnConfirmDelete:hover {
+  background-color: #dc2828;
+}
