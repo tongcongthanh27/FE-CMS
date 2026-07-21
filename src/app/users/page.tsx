@@ -25,6 +25,7 @@ export default function UsersPage() {
   // Modal states
   const [userToSuspend, setUserToSuspend] = useState<User | null>(null);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [userToView, setUserToView] = useState<User | null>(null);
 
   useEffect(() => {
     fetchUsers();
@@ -104,6 +105,17 @@ export default function UsersPage() {
     }
   };
 
+  const handleViewUser = async (userId: string) => {
+    try {
+      const res = await userApi.getUser(userId);
+      if ((res.code === 1000 || res.code === 0) && res.result) {
+        setUserToView(res.result);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -146,7 +158,15 @@ export default function UsersPage() {
                 <tr><td colSpan={8} className={styles.loadingCell}>Đang tải...</td></tr>
               ) : users.map(user => (
                 <tr key={user.id || user.username}>
-                  <td><span className={styles.usernameText}>{user.username}</span></td>
+                  <td>
+                    <span 
+                      className={styles.usernameText} 
+                      onClick={() => handleViewUser(user.id)}
+                      style={{ cursor: 'pointer', color: '#3b82f6', textDecoration: 'underline' }}
+                    >
+                      {user.username}
+                    </span>
+                  </td>
                   <td>{user.fullName}</td>
                   <td>{user.department || 'Chưa cập nhật'}</td>
                   <td>{user.phone || 'Chưa cập nhật'}</td>
@@ -247,6 +267,28 @@ export default function UsersPage() {
         <div className={styles.modalActions}>
           <button onClick={() => setUserToDelete(null)} className={styles.btnCancel}>Hủy</button>
           <button onClick={handleDelete} className={styles.btnConfirmDelete}>Xóa</button>
+        </div>
+      </Modal>
+
+      {/* View Modal */}
+      <Modal
+        isOpen={!!userToView}
+        onClose={() => setUserToView(null)}
+        title="Thông tin chi tiết"
+      >
+        {userToView && (
+          <div className={styles.viewUserDetails}>
+            <p><strong>Tên tài khoản:</strong> {userToView.username}</p>
+            <p><strong>Họ và tên:</strong> {userToView.fullName}</p>
+            <p><strong>Email:</strong> {userToView.email}</p>
+            <p><strong>Ngày sinh:</strong> {userToView.dob}</p>
+            <p><strong>Số điện thoại:</strong> {userToView.phone || 'Chưa cập nhật'}</p>
+            <p><strong>Trạng thái:</strong> {userToView.status === 'LOCKED' ? 'Tạm khóa' : (userToView.status === 'ACTIVE' ? 'Hoạt động' : userToView.status)}</p>
+            <p><strong>Quyền:</strong> {userToView.roles && userToView.roles.length > 0 ? userToView.roles.map((r: any) => r.name || r).join(', ') : 'Chưa phân quyền'}</p>
+          </div>
+        )}
+        <div className={styles.modalActions}>
+          <button onClick={() => setUserToView(null)} className={styles.btnCancel}>Đóng</button>
         </div>
       </Modal>
     </div>

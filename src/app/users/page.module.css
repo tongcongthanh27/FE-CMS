@@ -357,6 +357,27 @@
   cursor: pointer;
   transition: background-color 0.2s;
 }
+
 .btnConfirmDelete:hover {
-  background-color: #dc2828;
+  background-color: #dc2626; /* red-600 */
+}
+
+/* User details view */
+.viewUserDetails {
+  text-align: left;
+  margin-bottom: 20px;
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+.viewUserDetails p {
+  margin-bottom: 12px;
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 8px;
+}
+
+.viewUserDetails strong {
+  display: inline-block;
+  width: 130px;
+  color: #4b5563;
 }
