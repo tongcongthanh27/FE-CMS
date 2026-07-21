@@ -16,7 +16,7 @@ export interface User {
   // UI mocked fields (not in API spec but needed for UI)
   phone?: string;
   department?: string;
-  role?: string;
+  roles?: any[];
   status?: string;
 }
 
@@ -26,6 +26,7 @@ export interface UserCreationRequest {
   dob: string;
   fullName: string;
   email: string;
+  phone?: string;
 }
 
 export interface UserUpdateRequest {
@@ -33,6 +34,7 @@ export interface UserUpdateRequest {
   fullName: string;
   email: string;
   dob: string;
+  phone?: string;
 }
 
 async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<ApiResponse<T>> {
@@ -54,8 +56,27 @@ async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<Api
   }
 }
 
+export interface PageResponse<T> {
+  pageNo: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  last: boolean;
+  content: T[];
+}
+
 export const userApi = {
-  getUsers: () => fetchApi<User[]>('/users'),
+  getUsers: (pageNo: number = 0, pageSize: number = 20) => fetchApi<PageResponse<User>>(`/users/pagination?pageNo=${pageNo}&pageSize=${pageSize}`),
+  searchUsers: (params: { username?: string, fullName?: string, email?: string, pageNo?: number, pageSize?: number }) => {
+    const query = new URLSearchParams();
+    if (params.username) query.append('username', params.username);
+    if (params.fullName) query.append('fullName', params.fullName);
+    if (params.email) query.append('email', params.email);
+    if (params.pageNo !== undefined) query.append('pageNo', params.pageNo.toString());
+    if (params.pageSize !== undefined) query.append('pageSize', params.pageSize.toString());
+    return fetchApi<PageResponse<User>>(`/users/search?${query.toString()}`);
+  },
   getUser: (id: string) => fetchApi<User>(`/users/${id}`),
   createUser: (data: UserCreationRequest) => fetchApi<User>('/users', {
     method: 'POST',

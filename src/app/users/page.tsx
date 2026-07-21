@@ -10,20 +10,46 @@ export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   
+  // Pagination states
+  const [pageNo, setPageNo] = useState(0);
+  const [pageSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalElements, setTotalElements] = useState(0);
+  
+  // Search states
+  const [searchUsername, setSearchUsername] = useState('');
+  const [searchFullName, setSearchFullName] = useState('');
+  const [searchEmail, setSearchEmail] = useState('');
+  const [searchTrigger, setSearchTrigger] = useState(0);
+  
   // Modal states
   const [userToSuspend, setUserToSuspend] = useState<User | null>(null);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [pageNo, pageSize, searchTrigger]);
 
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await userApi.getUsers();
+      const hasSearch = searchUsername || searchFullName || searchEmail;
+      const res = hasSearch 
+        ? await userApi.searchUsers({ username: searchUsername, fullName: searchFullName, email: searchEmail, pageNo, pageSize })
+        : await userApi.getUsers(pageNo, pageSize);
+      
       if ((res.code === 1000 || res.code === 0) && res.result) {
-        setUsers(res.result);
+        if (Array.isArray(res.result)) {
+          // Fallback if backend still returns List<User>
+          setUsers(res.result);
+          setTotalPages(1);
+          setTotalElements(res.result.length);
+        } else {
+          // Proper PageResponse handling
+          setUsers(res.result.content || []);
+          setTotalPages(res.result.totalPages || 1);
+          setTotalElements(res.result.totalElements || 0);
+        }
       } else {
         setUsers(mockUsers);
       }
@@ -88,10 +114,13 @@ export default function UsersPage() {
       <div className={styles.card}>
         <div className={styles.filters}>
           <div className={styles.filterInputs}>
-            <input type="text" placeholder="Tên tài khoản..." className={styles.input} />
-            <input type="text" placeholder="Họ và tên..." className={styles.input} />
-            <input type="text" placeholder="Email..." className={styles.input} />
-            <button className={styles.btnPrimary}>Tìm kiếm</button>
+            <input type="text" placeholder="Tên tài khoản..." className={styles.input} value={searchUsername} onChange={e => setSearchUsername(e.target.value)} />
+            <input type="text" placeholder="Họ và tên..." className={styles.input} value={searchFullName} onChange={e => setSearchFullName(e.target.value)} />
+            <input type="text" placeholder="Email..." className={styles.input} value={searchEmail} onChange={e => setSearchEmail(e.target.value)} />
+            <button className={styles.btnPrimary} onClick={() => {
+              if (pageNo !== 0) setPageNo(0);
+              else setSearchTrigger(prev => prev + 1);
+            }}>Tìm kiếm</button>
           </div>
           <Link href="/users/create" className={styles.btnSuccess}>
             + Thêm mới
@@ -119,10 +148,10 @@ export default function UsersPage() {
                 <tr key={user.id || user.username}>
                   <td><span className={styles.usernameText}>{user.username}</span></td>
                   <td>{user.fullName}</td>
-                  <td>{user.department || 'Kinh doanh'}</td>
-                  <td>{user.phone || '0912 111 222'}</td>
+                  <td>{user.department || 'Chưa cập nhật'}</td>
+                  <td>{user.phone || 'Chưa cập nhật'}</td>
                   <td>{user.email}</td>
-                  <td><span className={styles.roleBadge}>{user.role || 'Nhân viên KD'}</span></td>
+                  <td><span className={styles.roleBadge}>{(user.roles && user.roles.length > 0) ? user.roles.map((r: any) => r.name || r).join(', ') : 'Chưa phân quyền'}</span></td>
                   <td>
                     <span className={`${styles.statusBadge} ${(user.status === 'Tạm khóa' || user.status === 'LOCKED') ? styles.statusInactive : styles.statusActive}`}>
                       <span className={styles.dot}></span>
@@ -146,11 +175,32 @@ export default function UsersPage() {
 
         <div className={styles.pagination}>
           <div className={styles.pageInfo}>
-            Hiển thị 1–10 / 12 bản ghi
+            Hiển thị {totalElements > 0 ? pageNo * pageSize + 1 : 0}–{Math.min((pageNo + 1) * pageSize, totalElements)} / {totalElements} bản ghi
           </div>
           <div className={styles.pageControls}>
-            <button className={`${styles.pageBtn} ${styles.pageBtnActive}`}>1</button>
-            <button className={styles.pageBtn}>2</button>
+            <button 
+              className={styles.pageBtn} 
+              disabled={pageNo === 0}
+              onClick={() => setPageNo(p => Math.max(0, p - 1))}
+            >
+              &lt;
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button 
+                key={i} 
+                className={`${styles.pageBtn} ${pageNo === i ? styles.pageBtnActive : ''}`}
+                onClick={() => setPageNo(i)}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button 
+              className={styles.pageBtn} 
+              disabled={pageNo >= totalPages - 1}
+              onClick={() => setPageNo(p => Math.min(totalPages - 1, p + 1))}
+            >
+              &gt;
+            </button>
           </div>
         </div>
       </div>

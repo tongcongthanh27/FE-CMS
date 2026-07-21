@@ -15,7 +15,8 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
     email: '',
     phone: '',
     accountType: 'Nội bộ',
-    role: ''
+    role: '',
+    dob: ''
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -33,7 +34,8 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
             email: user.email,
             phone: user.phone || '',
             accountType: 'Nội bộ', // Mocked
-            role: user.role || ''
+            role: user.role || '',
+            dob: user.dob || '1990-01-01'
           });
         }
       } catch (err) {
@@ -45,7 +47,8 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
           email: 'nguyenvan.a@co.vn',
           phone: '0912 111 222',
           accountType: 'Nội bộ',
-          role: ''
+          role: '',
+          dob: '1990-01-01'
         });
       } finally {
         setLoading(false);
@@ -68,15 +71,19 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
       const payload: UserUpdateRequest = {
         fullName: formData.fullName,
         email: formData.email,
-        dob: '1990-01-01', // API requires dob, default
+        dob: formData.dob || '1990-01-01', 
+        phone: formData.phone,
       };
       
-      await userApi.updateUser(id, payload);
-      router.push('/users'); // Redirect on success
+      const res = await userApi.updateUser(id, payload);
+      if (res.code === 0 || res.code === 1000) {
+        router.push('/users'); // Redirect on success
+      } else {
+        setError(res.message || 'Cập nhật thất bại');
+      }
     } catch (err) {
       console.error(err);
-      // For demo purposes
-      router.push('/users');
+      setError('Đã xảy ra lỗi hệ thống');
     } finally {
       setSaving(false);
     }

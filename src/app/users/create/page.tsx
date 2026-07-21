@@ -37,14 +37,18 @@ export default function CreateUserPage() {
         fullName: formData.fullName,
         email: formData.email,
         dob: '1990-01-01', // API requires dob, setting a default for now
+        phone: formData.phone,
       };
       
-      await userApi.createUser(payload);
-      router.push('/users'); // Redirect on success
+      const res = await userApi.createUser(payload);
+      if (res.code === 0 || res.code === 1000) {
+        router.push('/users'); // Redirect on success
+      } else {
+        setError(res.message || 'Thêm mới thất bại');
+      }
     } catch (err) {
       console.error(err);
-      // For demo purposes, we'll still redirect assuming the API might fail since there's no real backend
-      router.push('/users');
+      setError('Đã xảy ra lỗi hệ thống');
     } finally {
       setLoading(false);
     }
