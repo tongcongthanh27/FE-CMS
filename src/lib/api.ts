@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '/cms';
 
 export interface ApiResponse<T> {
   code: number;
@@ -37,18 +37,47 @@ export interface UserUpdateRequest {
   phone?: string;
 }
 
+export class ApiError extends Error {
+  code: number;
+  constructor(message: string, code: number) {
+    super(message);
+    this.code = code;
+    this.name = 'ApiError';
+  }
+}
+
 async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<ApiResponse<T>> {
   const url = `${API_URL}${endpoint}`;
+  
+  let token = null;
+  if (typeof window !== 'undefined') {
+    token = localStorage.getItem('token') || sessionStorage.getItem('token');
+  }
+
   try {
     const response = await fetch(url, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
         ...options?.headers,
       },
     });
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (e) {
+      if (!response.ok) {
+        throw new ApiError('Lỗi phản hồi từ máy chủ', response.status);
+      }
+      throw new Error('Lỗi không xác định từ máy chủ');
+    }
+    
+    if (data.code !== 1000 && data.code !== 0) {
+      throw new ApiError(data.message || 'API Error', data.code);
+    }
+    
     return data;
   } catch (error) {
     console.error('API Error:', error);

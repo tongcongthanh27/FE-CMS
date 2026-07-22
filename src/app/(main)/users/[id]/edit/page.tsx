@@ -81,9 +81,9 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
       } else {
         setError(res.message || 'Cập nhật thất bại');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError('Đã xảy ra lỗi hệ thống');
+      setError(err.message || 'Đã xảy ra lỗi hệ thống');
     } finally {
       setSaving(false);
     }

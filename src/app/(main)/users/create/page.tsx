@@ -46,9 +46,17 @@ export default function CreateUserPage() {
       } else {
         setError(res.message || 'Thêm mới thất bại');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError('Đã xảy ra lỗi hệ thống');
+      if (err.name === 'ApiError') {
+        const code = err.code;
+        if (code === 1002) setError('Tên đăng nhập đã tồn tại.');
+        else if (code === 1003) setError('Tên đăng nhập phải chứa ít nhất 3 ký tự.');
+        else if (code === 1004) setError('Mật khẩu phải chứa ít nhất 8 ký tự.');
+        else setError(err.message || 'Thêm mới thất bại');
+      } else {
+        setError(err.message || 'Đã xảy ra lỗi hệ thống');
+      }
     } finally {
       setLoading(false);
     }
