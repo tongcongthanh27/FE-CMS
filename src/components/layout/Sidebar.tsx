@@ -26,7 +26,7 @@ export default function Sidebar() {
 
       <nav className={styles.navGroup}>
         <div className={styles.navTitle}>TÀI KHOẢN</div>
-        <Link href="#" className={styles.navItem}>
+        <Link href="/profile" className={`${styles.navItem} ${pathname === '/profile' ? styles.active : ''}`}>
           <span className={styles.navIcon}>👤</span>
           Thông tin tài khoản
         </Link>
