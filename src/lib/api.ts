@@ -46,7 +46,19 @@ export class ApiError extends Error {
   }
 }
 
-async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<ApiResponse<T>> {
+let isRefreshing = false;
+let refreshSubscribers: ((token: string) => void)[] = [];
+
+function subscribeTokenRefresh(cb: (token: string) => void) {
+  refreshSubscribers.push(cb);
+}
+
+function onRefreshed(token: string) {
+  refreshSubscribers.forEach(cb => cb(token));
+  refreshSubscribers = [];
+}
+
+async function fetchApi<T>(endpoint: string, options?: RequestInit, isRetry = false): Promise<ApiResponse<T>> {
   const url = `${API_URL}${endpoint}`;
   
   let token = null;
@@ -64,6 +76,60 @@ async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<Api
       },
     });
 
+    // Handle Token Expiration (401 Unauthorized)
+    if (response.status === 401 && !isRetry && token) {
+      if (isRefreshing) {
+        return new Promise<ApiResponse<T>>((resolve, reject) => {
+          subscribeTokenRefresh((newToken) => {
+            if (newToken) {
+              resolve(fetchApi<T>(endpoint, options, true));
+            } else {
+              reject(new ApiError('Phiên đăng nhập đã hết hạn', 401));
+            }
+          });
+        });
+      }
+
+      isRefreshing = true;
+      try {
+        const refreshRes = await fetch(`${API_URL}/auth/refresh`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token })
+        });
+
+        if (refreshRes.ok) {
+          const refreshData = await refreshRes.json();
+          const newToken = refreshData.result?.token || refreshData.token;
+          
+          if (newToken) {
+            if (typeof window !== 'undefined') {
+              if (localStorage.getItem('token')) {
+                localStorage.setItem('token', newToken);
+              } else {
+                sessionStorage.setItem('token', newToken);
+              }
+            }
+            onRefreshed(newToken);
+            return fetchApi<T>(endpoint, options, true);
+          }
+        }
+      } catch (e) {
+        console.error('Refresh token failed:', e);
+      } finally {
+        isRefreshing = false;
+      }
+      
+      // If refresh failed, clear token and redirect to login
+      onRefreshed('');
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
+        window.location.href = '/login';
+      }
+      throw new ApiError('Phiên đăng nhập đã hết hạn', 401);
+    }
+
     let data;
     try {
       data = await response.json();
@@ -74,7 +140,7 @@ async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<Api
       throw new Error('Lỗi không xác định từ máy chủ');
     }
     
-    if (data.code !== 1000 && data.code !== 0) {
+    if (data.code !== undefined && data.code !== 1000 && data.code !== 0) {
       throw new ApiError(data.message || 'API Error', data.code);
     }
     
